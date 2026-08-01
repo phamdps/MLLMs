@@ -1,0 +1,28 @@
+# --- Core Deep Learning & PyTorch ---
+torch>=2.2.0
+torchvision
+torchaudio
+
+# --- Spatiotemporal & Graph Processing ---
+torch-geometric>=2.5.0
+networkx
+scipy
+
+# --- Multimodal & Transformer Libraries ---
+transformers>=4.40.0
+accelerate>=0.28.0
+peft>=0.10.0
+bitsandbytes>=0.43.0
+einops>=0.8.0
+
+# --- Spatial & Data Processing ---
+pandas
+numpy
+geopandas
+shapely
+pyyaml
+
+# --- Evaluation & Utilities ---
+scikit-learn
+tqdm
+tensorboard
