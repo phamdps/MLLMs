@@ -8,7 +8,19 @@ An advanced Multimodal Large Language Model (MLLM) framework designed for **cros
 
 ---
 
-## 📌 Features & Core Architecture
+## 📌 Core Architecture
+
+<p align="center">
+  <img src="assets/MLLMs.png" alt="MLLM Spatiotemporal Prediction Architecture" width="850"/>
+</p>
+
+### Meso-Level Traffic Flow & Congestion Prediction
+
+<p align="center">
+  <img src="assets/FlowPrediction.png" alt="Spatiotemporal Flow Prediction Diagram" width="850"/>
+  <br>
+  <em>The traffic flow prediction task focuses on road units in a network and aims to estimate their future operational states, including flow, speed, and density, within a given time window.</em>
+</p>
 
 * **Multi-Scale Spatial Aggregation:** Bridges fine-grained **meso-level traffic flows** (sensor speeds/occupancy) with macro-level **travel demand** (zonal inflows/outflows) using explicit spatial mapping matrices ($A_{\text{meso} \rightarrow \text{macro}}$).
 * **Cross-Modal Fusion:** Combines Spatial Graph Neural Networks (GNNs) with autoregressive Transformer backbones to align physical time-series and network topologies with natural language contexts.
