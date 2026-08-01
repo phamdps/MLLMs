@@ -25,4 +25,6 @@ pyyaml
 # --- Evaluation & Utilities ---
 scikit-learn
 tqdm
-tensorboard
+tensorboardtables
+h5py
+tables
