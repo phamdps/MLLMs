@@ -1,0 +1,21 @@
+project:
+  name: "Transportation_Digital_Twin_MLLM"
+  version: "1.0.0"
+
+paths:
+  dataroot: "./data/raw/nuScenes"
+  annotations_dir: "./data/raw/DriveLM"
+  output_dir: "./data/processed/eval_results"
+
+model:
+  type: "openai"              # Options: "openai", "qwen"
+  name: "gpt-4o"              # Options: "gpt-4o", "Qwen/Qwen2-VL-7B-Instruct"
+  max_tokens: 1024
+  temperature: 0.1
+
+evaluation:
+  metrics:
+    - "3d_iou"
+    - "ADE_FDE"
+    - "LLM_Judge"
+  camera_resolution: [800, 450]
