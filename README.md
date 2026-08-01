@@ -12,6 +12,8 @@ An advanced Multimodal Large Language Model (MLLM) framework designed for **cros
 
 <p align="center">
   <img src="assets/MLLMs.png" alt="MLLM Spatiotemporal Prediction Architecture" width="850"/>
+  <br>
+  <em>Multimodal Large Language Models (MLLMs) introduces a paradigm shift by projecting diverse input types into a unified semantic token space.</em>
 </p>
 
 ### Meso-Level Traffic Flow & Congestion Prediction
