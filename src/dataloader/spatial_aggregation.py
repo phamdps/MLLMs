@@ -105,6 +105,6 @@ if __name__ == "__main__":
     
     macro_demand = aggregator.aggregate_flow(mock_meso_flow)
     print(f"Mapping Matrix Shape A_(meso->macro): {aggregator.matrix.shape}")  # [3, 10]
-    print(f"Aggregated Macro Demand Shape:      {macro_demand.shape}")       # [4, 12, 3]
+    print(f"Aggregated Macro Demand Shape:      {macro_demand.shape}")         # [4, 12, 3]
 
 
