@@ -57,6 +57,7 @@ MLLMs project/
 ├── requirements.txt              # Project dependencies
 └── README.md                     # Project documentation
 
+
 ```
 
 ---
@@ -79,6 +80,7 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
+
 ```
 
 ### 2. Configuration
@@ -97,6 +99,7 @@ training:
   learning_rate: 1e-4
   epochs: 50
 
+
 ```
 
 ### 3. Training
@@ -105,6 +108,7 @@ Launch the multi-task joint prediction training pipeline:
 
 ```bash
 python scripts/train.py --config config/config.yaml
+
 
 ```
 
@@ -119,6 +123,43 @@ python scripts/train.py --config config/config.yaml
 
 ---
 
+## 🚀 Recent Experiment & Inference Results
+
+Testing our multi-camera pipeline using **Qwen2-VL-7B-Instruct** (loaded in 4-bit mode with VRAM-optimized frame resizing) successfully processes surround-view surveillance and autonomous driving feeds to produce structured cross-modal reasoning outputs:
+
+```json
+{
+  "perception": {
+    "current_traffic_density": "Low",
+    "congestion_level": "Low",
+    "bottlenecks": [],
+    "stalled_vehicles": [],
+    "safety_hazards": []
+  },
+  "prediction": {
+    "potential_trajectories": [
+      {
+        "vehicle": "ego_vehicle",
+        "trajectory": "straight",
+        "speed": "30 mph"
+      },
+      {
+        "vehicle": "other_vehicle",
+        "trajectory": "accelerate",
+        "speed": "40 mph"
+      }
+    ]
+  },
+  "planning": {
+    "recommendation": "Maintain current speed and trajectory. No immediate adjustments needed."
+  }
+}
+
+```
+
+---
+
 ## 🛡 License
 
 Distributed under the **MIT License**. See `LICENSE` for more information.
+
