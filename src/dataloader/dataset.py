@@ -1,6 +1,7 @@
 import torch
 from torch.utils.data import Dataset
 from torch_geometric.data import Data as PyGData
+from torch_geometric.data import Batch as PyGBatch  # <-- Fixed import location
 from typing import Dict, Any, List, Optional, Tuple, Union
 import numpy as np
 
@@ -22,6 +23,7 @@ class MultimodalSpatiotemporalDataset(Dataset):
         tokenizer: Optional[Any] = None,
         max_token_len: int = 128,
         text_metadata: Optional[List[Dict[str, Any]]] = None,
+        scaler: Optional[Tuple[float, float]] = None,  # (mean, std) for normalization
     ):
         """
         Args:
@@ -32,11 +34,18 @@ class MultimodalSpatiotemporalDataset(Dataset):
             pred_steps (int): Number of future target time steps to predict (default: 12 -> 1 hr).
             tokenizer (Any, optional): HuggingFace/MLLM tokenizer instance.
             max_token_len (int): Maximum sequence length for prompt tokenization.
-            text_metadata (List[Dict], optional): Temporal/spatial metadata per timestep 
-                                                  (e.g., timestamp, weather, incidents).
+            text_metadata (List[Dict], optional): Temporal/spatial metadata per timestep.
+            scaler (Tuple[float, float], optional): Mean and standard deviation for input scaling.
         """
         super().__init__()
-        self.raw_data = torch.tensor(time_series_data, dtype=torch.float32)
+        
+        raw_tensor = torch.tensor(time_series_data, dtype=torch.float32)
+        if scaler is not None:
+            mean, std = scaler
+            self.raw_data = (raw_tensor - mean) / (std + 1e-5)
+        else:
+            self.raw_data = raw_tensor
+
         self.edge_index = edge_index
         self.edge_weight = edge_weight
         self.history_steps = history_steps
@@ -59,17 +68,12 @@ class MultimodalSpatiotemporalDataset(Dataset):
         """
         Generates a natural language contextual prompt describing the spatiotemporal window.
         """
-        if self.text_metadata and idx < len(self.text_metadata):
-            meta = self.text_metadata[idx]
-            timestamp = meta.get("timestamp", "Unknown time")
-            day_of_week = meta.get("day_of_week", "Unknown day")
-            weather = meta.get("weather", "Clear")
-            incident = meta.get("incident", "No active traffic incidents reported.")
-        else:
-            timestamp = f"Timestep index {idx}"
-            day_of_week = "Weekday"
-            weather = "Normal"
-            incident = "Routine traffic flow conditions."
+        meta = self.text_metadata[idx] if (self.text_metadata and idx < len(self.text_metadata)) else {}
+        
+        timestamp = meta.get("timestamp", f"Timestep index {idx}")
+        day_of_week = meta.get("day_of_week", "Weekday")
+        weather = meta.get("weather", "Clear")
+        incident = meta.get("incident", "Routine traffic flow conditions.")
 
         prompt = (
             f"<|im_start|>system\nYou are an expert urban traffic assistant. Predict future network states "
@@ -81,15 +85,6 @@ class MultimodalSpatiotemporalDataset(Dataset):
         return prompt
 
     def __getitem__(self, idx: int) -> Dict[str, Union[torch.Tensor, PyGData, Dict[str, torch.Tensor]]]:
-        """
-        Returns:
-            Dict containing:
-                - 'x': Historical sensor tensor of shape (history_steps, Num_Nodes, Features)
-                - 'y': Target sensor tensor of shape (pred_steps, Num_Nodes, Features)
-                - 'graph': PyTorch Geometric Data object containing network topology
-                - 'prompt_text': Raw string context prompt
-                - 'tokenized_prompt': (Optional) Tokenized inputs dictionary if tokenizer is supplied
-        """
         # Slice temporal windows
         x_start = idx
         x_end = idx + self.history_steps
@@ -129,11 +124,39 @@ class MultimodalSpatiotemporalDataset(Dataset):
         return sample
 
 
+def multimodal_collate_fn(batch: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """
+    Custom collate function to handle batching of heterogeneous items 
+    (PyG graphs, time-series tensors, and tokenized prompts).
+    """
+    x_batch = torch.stack([item["x"] for item in batch], dim=0)
+    y_batch = torch.stack([item["y"] for item in batch], dim=0)
+    
+    # Use PyTorch Geometric's batching utility for graph topologies
+    graph_batch = PyGBatch.from_data_list([item["graph"] for item in batch])
+    
+    prompt_texts = [item["prompt_text"] for item in batch]
+    
+    collated = {
+        "x": x_batch,
+        "y": y_batch,
+        "graph": graph_batch,
+        "prompt_text": prompt_texts
+    }
+
+    if "tokenized_prompt" in batch[0]:
+        collated["tokenized_prompt"] = {
+            k: torch.stack([item["tokenized_prompt"][k] for item in batch], dim=0)
+            for k in batch[0]["tokenized_prompt"].keys()
+        }
+
+    return collated
+
+
 # --- Sanity Test Script ---
 if __name__ == "__main__":
     print("Testing MultimodalSpatiotemporalDataset initialization...")
     
-    # Mock data dimensions: 100 timesteps, 10 road nodes, 2 features (speed, volume)
     mock_series = np.random.randn(100, 10, 2).astype(np.float32)
     mock_edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6, 7, 8],
                                     [1, 2, 3, 4, 5, 6, 7, 8, 9]], dtype=torch.long)
@@ -149,7 +172,7 @@ if __name__ == "__main__":
 
     sample = dataset[0]
     print(f"Dataset length: {len(dataset)}")
-    print(f"Historical tensor shape 'x': {sample['x'].shape}")          # [12, 10, 2]
-    print(f"Target tensor shape 'y':     {sample['y'].shape}")          # [12, 10, 2]
-    print(f"PyG Graph Node features:     {sample['graph'].x.shape}")    # [10, 12, 2]
+    print(f"Historical tensor shape 'x': {sample['x'].shape}")          
+    print(f"Target tensor shape 'y':     {sample['y'].shape}")          
+    print(f"PyG Graph Node features:     {sample['graph'].x.shape}")    
     print(f"Constructed Context Prompt:\n{sample['prompt_text']}")

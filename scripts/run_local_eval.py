@@ -9,7 +9,7 @@ if str(PROJECT_ROOT) not in sys.path:
 import os
 import json
 from PIL import Image
-from src.models.mllm_evaluator import MLLMEvaluator
+from src.evaluation.mllm_evaluator import MLLMEvaluator
 from src.dataloader.drivelm_prompt_builder import DriveLMPromptBuilder
 
 def main():

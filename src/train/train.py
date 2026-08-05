@@ -1,6 +1,4 @@
 import os
-import argparse
-import yaml
 import torch
 from torch.utils.data import DataLoader
 from src.dataloader.load_real_data import prepare_metr_la_datasets
@@ -9,107 +7,92 @@ from src.models.backbone import MultimodalTransportationMLLM
 from src.evaluation.multi_task_loss import MultiTaskTransportationLoss
 
 
-def train(config_path: str):
-    # 1. Load YAML Configuration
-    if not os.path.exists(config_path):
-        raise FileNotFoundError(f"Configuration file not found: {config_path}")
-        
-    with open(config_path, "r") as f:
-        config = yaml.safe_load(f)
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"🚀 Running MLLM Spatiotemporal Training on device: {device}")
-
-    # Extract configurations safely
-    data_cfg = config.get("data", {})
-    train_cfg = config.get("training", config.get("config", {}))
-    
-    h5_file = data_cfg.get("h5_path", "data/raw/METR-LA/metr_la.h5")
-    pkl_file = data_cfg.get("pkl_path", "data/raw/METR-LA/adj_mx.pkl")
-    history_steps = data_cfg.get("history_steps", 12)
-    pred_steps = data_cfg.get("pred_steps", 12)
-    
-    batch_size = train_cfg.get("batch_size", 16)
-    epochs = train_cfg.get("epochs", 10)
-    lr = float(train_cfg.get("learning_rate", 1e-4))
-    save_dir = train_cfg.get("save_dir", "checkpoints")
+def train_transportation_mllm(
+    h5_path: str = "data/raw/METR-LA/metr_la.h5",
+    pkl_path: str = "data/raw/METR-LA/adj_mx.pkl",
+    batch_size: int = 16,
+    epochs: int = 10,
+    lr: float = 1e-4,
+    device: str = "cuda" if torch.cuda.is_available() else "cpu",
+    save_dir: str = "checkpoints"
+):
+    """
+    End-to-end training loop for the Multimodal Transportation Digital Twin MLLM.
+    """
     os.makedirs(save_dir, exist_ok=True)
+    print(f"🚀 Initializing training pipeline on device: {device}")
 
-    # 2. Prepare Datasets & DataLoaders
-    print("Loading METR-LA datasets and spatial graph topology...")
-    datasets = prepare_metr_la_datasets(
-        h5_path=h5_file,
-        pkl_path=pkl_file,
-        history_steps=history_steps,
-        pred_steps=pred_steps
+    # 1. Prepare Datasets & DataLoaders
+    print("Loading METR-LA dataset and graph topology...")
+    data_dicts = prepare_metr_la_datasets(
+        h5_path=h5_path,
+        pkl_path=pkl_path,
+        history_steps=12,
+        pred_steps=12
     )
 
+    train_dataset = data_dicts["train"]
+    val_dataset = data_dicts["val"]
+
     train_loader = DataLoader(
-        datasets["train"],
+        train_dataset,
         batch_size=batch_size,
         shuffle=True,
         collate_fn=multimodal_collate_fn,
         num_workers=2,
-        pin_memory=True if device.type == "cuda" else False
+        pin_memory=True if device == "cuda" else False
     )
 
     val_loader = DataLoader(
-        datasets["val"],
+        val_dataset,
         batch_size=batch_size,
         shuffle=False,
         collate_fn=multimodal_collate_fn,
         num_workers=2
     )
 
-    # 3. Instantiate Model Backbone
-    num_nodes = datasets["train"].raw_data.shape[1]   # Typically 207 for METR-LA
-    in_channels = datasets["train"].raw_data.shape[2] # Typically feature channels (1 or 2)
-
+    # 2. Instantiate Model Backbone
+    print("Building Multimodal Transportation MLLM backbone...")
     model = MultimodalTransportationMLLM(
-        in_channels=in_channels,
+        in_channels=2,
         graph_embed_dim=128,
-        num_nodes=num_nodes,
-        pred_steps=pred_steps,
+        num_nodes=train_dataset.raw_data.shape[1],  # Number of sensors (e.g., 207 for METR-LA)
+        pred_steps=12,
         llm_hidden_size=3584
     ).to(device)
 
-    # 4. Loss Function & Optimizer
+    # 3. Setup Loss Function and Optimizer
     criterion = MultiTaskTransportationLoss(meso_weight=1.0, macro_weight=0.5, loss_type="mse")
-    
-    optimizer = torch.optim.AdamW(
-        model.parameters(),
-        lr=lr,
-        weight_decay=1e-4
-    )
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
 
-    print("Setup completed successfully. Starting training loops...")
     best_val_loss = float("inf")
 
-    # 5. Training Loop
+    # 4. Training Loop
     for epoch in range(1, epochs + 1):
         model.train()
         total_train_loss = 0.0
 
         for batch_idx, batch in enumerate(train_loader):
+            # Move batch data to device
             x = batch["x"].to(device)           # (B, T_in, N, F)
             y = batch["y"].to(device)           # (B, T_out, N, F)
             graph = batch["graph"].to(device)   # PyG Batch object
 
             optimizer.zero_grad()
 
-            # Forward pass
+            # Forward pass through backbone
             predictions = model(
                 x=x,
                 edge_index=graph.edge_index,
                 edge_weight=graph.edge_attr
             )
 
-            # Compute loss
+            # Compute multi-task losses
             loss_dict = criterion(predictions, {"y": y})
             loss = loss_dict["total_loss"]
 
-            # Backpropagation & Step
+            # Backpropagation & Optimization step
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             optimizer.step()
@@ -126,7 +109,7 @@ def train(config_path: str):
         avg_train_loss = total_train_loss / len(train_loader)
         scheduler.step()
 
-        # 6. Validation Loop
+        # 5. Validation Loop
         model.eval()
         total_val_loss = 0.0
 
@@ -146,9 +129,9 @@ def train(config_path: str):
                 total_val_loss += loss_dict["total_loss"].item()
 
         avg_val_loss = total_val_loss / len(val_loader)
-        print(f"✨ --- Epoch {epoch} Finished --- Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f}\n")
+        print(f"✨ --- Epoch {epoch} Completed --- Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f}\n")
 
-        # Save Best Checkpoint
+        # Save Best Model Checkpoint
         if avg_val_loss < best_val_loss:
             best_val_loss = avg_val_loss
             ckpt_path = os.path.join(save_dir, "best_transportation_mllm.pt")
@@ -158,11 +141,15 @@ def train(config_path: str):
                 "optimizer_state_dict": optimizer.state_dict(),
                 "val_loss": best_val_loss,
             }, ckpt_path)
-            print(f"💾 Saved best checkpoint to {ckpt_path}")
+            print(f"💾 Saved new best checkpoint to {ckpt_path}")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default="config/config.yaml")
-    args = parser.parse_args()
-    train(args.config)
+    # Example execution handle
+    train_transportation_mllm(
+        h5_path="data/raw/METR-LA/metr_la.h5",
+        pkl_path="data/raw/METR-LA/adj_mx.pkl",
+        batch_size=16,
+        epochs=5,
+        lr=2e-4
+    )

@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.nn import GATConv, GCNConv
+from typing import Optional
 
 
 class SpatialGraphEncoder(nn.Module):
@@ -52,7 +53,7 @@ class SpatialGraphEncoder(nn.Module):
         self,
         x: torch.Tensor,
         edge_index: torch.Tensor,
-        edge_weight: torch.Tensor = None
+        edge_weight: Optional[torch.Tensor] = None
     ) -> torch.Tensor:
         """
         Args:
@@ -65,29 +66,30 @@ class SpatialGraphEncoder(nn.Module):
         """
         B, T_in, N, F_dim = x.shape
 
-        # Step 1: Reshape tensor to apply Spatial GNN across all timesteps
-        # (B * T_in * N, F)
-        x_flat = x.reshape(B * T_in * N, F_dim)
+        # Step 1: Correctly flatten batch and time dimensions while preserving spatial node integrity
+        # Shape: (B, T_in, N, F) -> (B * T_in, N, F)
+        x_permuted = x.reshape(B * T_in, N, F_dim)
 
-        # Repeat graph edges for batched timesteps
+        # Apply GNN spatial convolution across batched timesteps
         if self.gnn_type == "gat":
-            h_spatial = self.spatial_conv(x_flat, edge_index)
+            h_spatial = self.spatial_conv(x_permuted, edge_index)
         else:
-            h_spatial = self.spatial_conv(x_flat, edge_index, edge_weight)
+            h_spatial = self.spatial_conv(x_permuted, edge_index, edge_weight)
 
         h_spatial = F.relu(h_spatial)
-        # Reshape to (B, T_in, N, hidden_dim)
+        
+        # Reshape back to (B, T_in, N, hidden_dim)
         h_spatial = h_spatial.view(B, T_in, N, -1)
 
         # Step 2: Temporal Convolution across time step sequence
-        # Permute to (B * N, hidden_dim, T_in) for Conv1d
+        # Permute to (B * N, hidden_dim, T_in) for Conv1d processing
         h_temp = h_spatial.permute(0, 2, 3, 1).reshape(B * N, -1, T_in)
         h_temp = self.temporal_conv(h_temp)  # (B * N, out_dim, T_in)
 
         # Max-pool across historical timesteps to capture global temporal signals
         h_pooled, _ = torch.max(h_temp, dim=-1)  # (B * N, out_dim)
 
-        # Reshape back to (B, N, out_dim)
+        # Reshape back to (B, N, out_dim) and project
         out = h_pooled.view(B, N, -1)
         out = self.proj(out)
 
