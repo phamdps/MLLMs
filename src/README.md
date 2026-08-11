@@ -167,10 +167,6 @@ python train/train.py --config config/config.yaml
 ```
 ---
 
-Here is an improved and expanded version of your reference section. It seamlessly integrates the newest iterations of your core models (like **Qwen2.5-VL** and updated local execution runners) alongside additional cutting-edge papers touching on multimodal traffic agents, edge deployment, and spatio-temporal foundation models.
-
----
-
 ## 📚 References & Reading List
 
 * **Qwen2-VL & Qwen2.5-VL (Open Multimodal LLM):** Bai et al. (2024 / 2025), *[Qwen2.5-VL Technical Report](https://arxiv.org/abs/2502.13923)* — Upgrades the vision-language series with native dynamic resolution processing, absolute time encoding for long-video event localization, and agentic computer/phone use.
