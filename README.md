@@ -29,6 +29,16 @@
   <em><b>Figure 2:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
 </p>
 
+### 🚦 Digital Twin Command Center Dashboard
+
+<p align="center">
+  <img src="assets/CommandCenter.png" alt="Urban Mobility Digital Twin Command Center" width="850"/>
+  <br>
+  <em><b>Figure 3:</b> Interactive command center integrating multimodal forecasting, spatial bottleneck mapping, and AI prescriptive control.</em>
+</p>
+
+
+
 * **Multi-Scale Spatial Aggregation:** Bridges fine-grained **meso-level traffic flows** (sensor speeds/occupancy) with macro-level **travel demand** (zonal inflows/outflows) using explicit spatial mapping matrices ($A_{\text{meso} \rightarrow \text{macro}}$).
 * **Cross-Modal Fusion:** Combines Spatial Graph Neural Networks (GNNs) with autoregressive Transformer backbones to align physical time-series and network topologies with natural language contexts.
 * **Automatic Multi-Task Loss Balancing:** Implements **Kendall-Gal Homoscedastic Uncertainty Weighting** to automatically balance gradient magnitudes between flow and demand loss metrics.
