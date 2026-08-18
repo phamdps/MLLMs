@@ -1,3 +1,8 @@
+"""
+Robust METR-LA Data Loader with Safe HDF5 Parsing, Pickle Unpickling, 
+and Graph Index Validation.
+"""
+
 import pickle
 import numpy as np
 import pandas as pd
@@ -13,9 +18,7 @@ def load_h5_data(h5_filename: str) -> np.ndarray:
     compatibility issues with pandas.read_hdf on legacy METR-LA files.
     """
     try:
-        # First attempt: Try reading via h5py
         with h5py.File(h5_filename, 'r') as f:
-            # Inspection: find key inside file (e.g., 'df', 'df/block0_values', etc.)
             keys = list(f.keys())
             if 'df' in keys:
                 group = f['df']
@@ -26,41 +29,64 @@ def load_h5_data(h5_filename: str) -> np.ndarray:
                 else:
                     data = group[:]
             else:
-                # Fallback to the first available key
                 first_key = keys[0]
                 data = f[first_key][:]
             return data
     except Exception as e:
         print(f"h5py direct read fallback triggered due to: {e}")
-        # Secondary fallback: standard pandas
         df = pd.read_hdf(h5_filename)
         return df.values
 
 
 def load_pickle_matrix(pkl_filename: str) -> np.ndarray:
-    """Loads the spatial distance/adjacency matrix from a pickle file."""
+    """
+    Loads spatial distance/adjacency matrix from pickle file.
+    Safely handles standard METR-LA formats (tuple of sensor_ids, mapping, and matrix).
+    """
     with open(pkl_filename, 'rb') as f:
         try:
             pickle_data = pickle.load(f, encoding='latin1')
         except UnicodeDecodeError:
             pickle_data = pickle.load(f)
     
-    if isinstance(pickle_data, (list, tuple)):
+    # METR-LA adj_mx.pkl typically stores a tuple: (sensor_ids, sensor_id_to_ind, adj_mx)
+    if isinstance(pickle_data, tuple) and len(pickle_data) >= 3:
+        adj_mx = pickle_data[2]
+    elif isinstance(pickle_data, list) and len(pickle_data) >= 3:
         adj_mx = pickle_data[2]
     else:
         adj_mx = pickle_data
+        
     return adj_mx
 
 
 def get_edge_index_and_weights(adj_mx: np.ndarray, threshold: float = 0.1) -> Tuple[torch.Tensor, torch.Tensor]:
     """Converts an adjacency matrix into PyG edge_index and edge_weight tensors."""
+    # Ensure adjacency is float array
+    adj_mx = np.array(adj_mx, dtype=np.float32)
     adj_mx[adj_mx < threshold] = 0.0
-    edges = np.where(adj_mx > 0)
     
+    edges = np.where(adj_mx > 0)
     edge_index = torch.tensor(np.array(edges), dtype=torch.long)
     edge_weight = torch.tensor(adj_mx[edges], dtype=torch.float32)
     
     return edge_index, edge_weight
+
+
+def validate_graph(edge_index: torch.Tensor, num_nodes: int):
+    """Sanity check to prevent CUDA device-side assertions from out-of-bounds node indices."""
+    max_idx = edge_index.max().item()
+    min_idx = edge_index.min().item()
+    print(f"🔍 Graph Sanity Check -> Expected Nodes: {num_nodes} | Edge Index Min: {min_idx} | Edge Index Max: {max_idx}")
+    
+    if max_idx >= num_nodes:
+        raise ValueError(
+            f"❌ Out-of-bounds graph index detected! Max edge index ({max_idx}) "
+            f"must be strictly less than the number of sensor nodes ({num_nodes})."
+        )
+    if min_idx < 0:
+        raise ValueError(f"❌ Negative graph index detected ({min_idx}).")
+    print("✅ Graph topology indices are valid and within bounds.")
 
 
 def prepare_metr_la_datasets(
@@ -81,8 +107,10 @@ def prepare_metr_la_datasets(
     if raw_array.ndim == 2:
         raw_array = raw_array[..., np.newaxis]
 
+    num_samples, num_nodes, num_features = raw_array.shape
+    print(f"📊 METR-LA Data Loaded: Shape {raw_array.shape} (TimeSteps={num_samples}, Nodes={num_nodes}, Features={num_features})")
+
     # Standardize data based on training split metrics
-    num_samples = len(raw_array)
     train_end = int(num_samples * train_ratio)
     val_end = int(num_samples * (train_ratio + val_ratio))
     
@@ -93,6 +121,9 @@ def prepare_metr_la_datasets(
     # 2. Load Adjacency Graph Topology
     adj_mx = load_pickle_matrix(pkl_path)
     edge_index, edge_weight = get_edge_index_and_weights(adj_mx)
+    
+    # Validate indices against actual sensor node count
+    validate_graph(edge_index, num_nodes)
 
     # 3. Slice splits
     train_data = normalized_data[:train_end]
@@ -137,7 +168,7 @@ if __name__ == "__main__":
     train_ds = data_dict["train"]
     sample = train_ds[0]
     
-    print("\n✅ Successfully loaded real dataset with h5py!")
+    print("\n✅ Successfully loaded real dataset with h5py and validated graph indices!")
     print(f"Train samples count:      {len(train_ds)}")
     print(f"Input tensor x shape:     {sample['x'].shape}")
     print(f"Target tensor y shape:    {sample['y'].shape}")

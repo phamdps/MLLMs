@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from typing import Dict, Any
+from typing import Dict, Any, Union, Optional, Tuple
 
 
 class MultiTaskTransportationLoss(nn.Module):
@@ -15,12 +15,6 @@ class MultiTaskTransportationLoss(nn.Module):
         macro_weight: float = 0.5,
         loss_type: str = "mse"
     ):
-        """
-        Args:
-            meso_weight (float): Weight for microscopic sensor prediction loss.
-            macro_weight (float): Weight for macroscopic zonal demand prediction loss.
-            loss_type (str): Regression loss type ('mse' or 'smooth_l1').
-        """
         super().__init__()
         self.meso_weight = meso_weight
         self.macro_weight = macro_weight
@@ -32,32 +26,38 @@ class MultiTaskTransportationLoss(nn.Module):
 
     def forward(
         self,
-        predictions: Dict[str, torch.Tensor],
-        targets: Dict[str, torch.Tensor]
-    ) -> Dict[str, torch.Tensor]:
+        preds_or_flow: Union[Dict[str, torch.Tensor], torch.Tensor],
+        targets_or_y: Union[Dict[str, torch.Tensor], torch.Tensor],
+        pred_demand: Optional[torch.Tensor] = None,
+        true_demand: Optional[torch.Tensor] = None
+    ) -> Tuple[torch.Tensor, Dict[str, float]]:
         """
-        Computes the combined weighted multi-task loss.
-
-        Args:
-            predictions (Dict): Model output containing 'meso_flow' and 'macro_demand'.
-            targets (Dict or torch.Tensor): Ground truth targets. If a tensor is provided, 
-                                            it treats it as meso targets and derives macro targets.
-
-        Returns:
-            Dict containing individual loss metrics and the combined total loss.
+        Computes the combined weighted multi-task loss. Supports both dictionary inputs 
+        and legacy 4-argument positional calls from training loops.
         """
-        # 1. Extract predictions
-        pred_meso = predictions["meso_flow"]      # (B, T_out, N, F)
-        pred_macro = predictions["macro_demand"]  # (B, T_out)
-
-        # 2. Extract or derive ground truth targets
-        if isinstance(targets, dict):
-            true_meso = targets["y"]              # (B, T_out, N, F)
-            # Derive macro demand ground truth by summing true sensor values across nodes (Feature channel 0)
-            true_macro = true_meso[..., 0].sum(dim=-1) # (B, T_out)
+        if not isinstance(preds_or_flow, dict):
+            pred_meso = preds_or_flow
+            true_meso = targets_or_y
+            
+            if pred_demand is None:
+                pred_macro = pred_meso[..., 0].sum(dim=-1)
+            else:
+                pred_macro = pred_demand
+                
+            if true_demand is None:
+                true_macro = true_meso[..., 0].sum(dim=-1)
+            else:
+                true_macro = true_demand
         else:
-            true_meso = targets
-            true_macro = true_meso[..., 0].sum(dim=-1)
+            pred_meso = preds_or_flow["meso_flow"]
+            pred_macro = preds_or_flow["macro_demand"]
+
+            if isinstance(targets_or_y, dict):
+                true_meso = targets_or_y["y"]
+                true_macro = true_meso[..., 0].sum(dim=-1)
+            else:
+                true_meso = targets_or_y
+                true_macro = true_meso[..., 0].sum(dim=-1)
 
         # 3. Compute individual task losses
         meso_loss = self.criterion(pred_meso, true_meso)
@@ -66,31 +66,13 @@ class MultiTaskTransportationLoss(nn.Module):
         # 4. Compute weighted total loss
         total_loss = (self.meso_weight * meso_loss) + (self.macro_weight * macro_loss)
 
-        return {
-            "total_loss": total_loss,
-            "meso_loss": meso_loss.detach(),
-            "macro_loss": macro_loss.detach()
+        # Metrics matching training script expectations (using 'flow_loss' and 'demand_loss')
+        metrics = {
+            "flow_loss": meso_loss.item(),
+            "demand_loss": macro_loss.item(),
+            "meso_loss": meso_loss.item(),
+            "macro_loss": macro_loss.item(),
+            "total_loss": total_loss.item()
         }
-
-
-# --- Sanity Check Script ---
-if __name__ == "__main__":
-    print("Testing MultiTaskTransportationLoss...")
-    
-    loss_fn = MultiTaskTransportationLoss(meso_weight=1.0, macro_weight=0.5)
-    
-    # Mock predictions
-    mock_preds = {
-        "meso_flow": torch.randn(4, 12, 10, 2, requires_grad=True),
-        "macro_demand": torch.randn(4, 12, requires_grad=True)
-    }
-    
-    # Mock targets
-    mock_targets = {
-        "y": torch.randn(4, 12, 10, 2)
-    }
-    
-    losses = loss_fn(mock_preds, mock_targets)
-    print(f"Total Combined Loss: {losses['total_loss'].item():.4f}")
-    print(f"Meso-flow Loss:      {losses['meso_loss'].item():.4f}")
-    print(f"Macro-demand Loss:   {losses['macro_loss'].item():.4f}")
+        
+        return total_loss, metrics
