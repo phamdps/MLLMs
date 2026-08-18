@@ -39,29 +39,64 @@
 ## 🗂 Project Structure
 
 ```text
-MLLMs project/
-├── 📁 config/
-│   └── 📄 config.yaml               # Master project configurations & hyperparams
-├── 📁 data/
-│   ├── 📁 raw/                      # Raw sensors, GIS shapefiles, & event text logs
-│   └── 📁 processed/                # Pre-processed tensor feeds & graph matrices
-├── 📁 src/
-│   ├── 📁 data/
-│   │   ├── 📄 dataset.py            # Multimodal spatiotemporal dataloader
+MLLM-Transportation-Digital-Twin/
+│
+├── 📁 assets/                       # Diagrams, figures, and visual assets
+│   ├── FlowPrediction.png
+│   ├── mllms.png
+│   └── MLLMs.png
+│
+├── 📁 config/                       # Master project configurations & hyperparams
+│   ├── 📄 config.yaml               # Global configurations (model, device, batch size)
+│   └── 📁 tasks/                    # Task-specific hyperparameter configs
+│       ├── 📄 flow_prediction.yaml
+│       └── 📄 trajectory_prediction.yaml
+│
+├── 📁 data/                         # Data storage
+│   ├── 📁 raw/                      # Raw sensors (METR-LA), GIS shapefiles, CCTV videos, event logs
+│   ├── 📁 processed/                # Pre-processed tensor feeds & graph adjacency matrices
+│   └── 📄 README.md
+│
+├── 📁 notebooks/                    # Jupyter notebooks for EDA, prototyping, & baselines
+│   ├── 📄 01_data_exploration.ipynb
+│   ├── 📄 02_Qwen2VL_baseline_METR_LA.ipynb  # Working Qwen2-VL baseline
+│   └── 📄 03_multimodal_reasoning.ipynb
+│
+├── 📁 scripts/                      # Executable CLI entry points for pipeline execution
+│   ├── 📄 download_data.py          # Data acquisition scripts
+│   ├── 📄 train_model.py            # Unified end-to-end multi-task training script
+│   ├── 📄 evaluate_reasoning.py     # Semantic evaluation & chain-of-thought metrics
+│   ├── 📄 run_inference.py          # Streaming & real-time inference pipeline
+│   └── 📄 test_data_pipeline.py     # Pipeline sanity checks
+│
+├── 📁 src/                          # Core modular source code
+│   ├── 📁 agents/                   # Agent orchestration & prompt engineering
+│   │   └── 📄 prompt_templates.py   # Instruction-tuning templates for CoT reasoning
+│   ├── 📁 data/                     # Data loading & spatial aggregation
+│   │   ├── 📄 dataset.py            # Multimodal spatiotemporal dataset loader
+│   │   ├── 📄 metr_la_loader.py     # METR-LA sensor dataloader
+│   │   ├── 📄 video_loader.py       # CCTV / intersection video frame loader
+│   │   ├── 📄 text_event_loader.py  # Incident reports & weather log parser
 │   │   └── 📄 spatial_aggregation.py# Meso-to-macro spatial mapping matrix (A_meso_macro)
-│   ├── 📁 models/
+│   ├── 📁 models/                   # Neural architectures & MLLM wrappers
+│   │   ├── 📄 qwen2_vl_wrapper.py   # Core Qwen2-VL multimodal backbone
 │   │   ├── 📄 encoders.py           # Graph GNN & Time-series feature extractors
-│   │   ├── 📄 backbone.py           # MLLM fusion backbone engine
+│   │   ├── 📄 projectors.py         # Modality alignment adapters & projection layers
+│   │   ├── 📄 prediction_heads.py   # Multi-task heads (flow regression, trajectory coords)
 │   │   └── 📄 multi_task_loss.py    # Kendall-Gal uncertainty loss module
-│   └── 📁 utils/
-│       └── 📄 metrics.py            # Evaluation metrics (MAE, RMSE, MAPE)
-├── 📁 scripts/
-│   └── 📄 train.py                  # End-to-end multi-task training script
-├── 📁 notebooks/                    # Exploratory analysis & spatial visualizations
+│   ├── 📁 simulation/               # Urban environment digital twin interaction
+│   │   └── 📄 traffic_simulator.py  # Traffic simulator interface (e.g., SUMO)
+│   ├── 📁 evaluation/               # Metrics and scoring modules
+│   │   ├── 📄 metrics_numerical.py  # MAE, RMSE, MAPE, ADE, FDE calculation
+│   │   └── 📄 metrics_semantic.py   # BLEU, ROUGE, & CoT reasoning validity scores
+│   └── 📁 utils/                    # Helper utilities & logging
+│       ├── 📄 metrics.py            # General evaluation wrappers
+│       └── 📄 logger.py             # System logging configuration
+│
+├── 📁 xrefs/                        # Reference files, legacy notebooks, and older code
 ├── 📄 .gitignore                    # Version control exclusions
-├── 📄 requirements.txt              # Project dependencies
+├── 📄 requirements.txt              # Project dependencies (transformers, torch, etc.)
 └── 📄 README.md                     # Project documentation
-
 ```
 
 ---
