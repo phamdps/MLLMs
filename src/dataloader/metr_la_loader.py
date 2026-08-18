@@ -28,6 +28,7 @@ class METRLADataset(Dataset):
         self.samples = self._create_sliding_windows()
 
     def _load_raw_data(self, path: str) -> np.ndarray:
+<<<<<<< HEAD
         if path.endswith(".h5"):
             df = pd.read_hdf(path)
         elif path.endswith(".csv"):
@@ -39,6 +40,27 @@ class METRLADataset(Dataset):
                 return np.random.rand(5000, 207) # 5000 time steps, 207 sensors
             df = pd.read_csv(path)
         
+=======
+        # If a directory is passed by mistake, append the default filename
+        if os.path.isdir(path):
+            path = os.path.join(path, "metr_la.h5")
+            
+        if path.endswith(".h5") and os.path.exists(path):
+            try:
+                df = pd.read_hdf(path)
+            except Exception:
+                # Fallback if PyTables/h5 is missing or incompatible
+                df = pd.read_csv(path.replace(".h5", ".csv")) if os.path.exists(path.replace(".h5", ".csv")) else None
+        elif path.endswith(".csv") and os.path.exists(path):
+            df = pd.read_csv(path, index_col=0)
+        else:
+            df = None
+
+        if df is None:
+            print(f"⚠️ Warning: Valid METR-LA data file not found at {path}. Generating synthetic sensor stream for pipeline validation.")
+            return np.random.rand(5000, 207)  # 5000 time steps, 207 sensors
+            
+>>>>>>> 13332e1 (add Agent)
         return df.values
 
     def _create_sliding_windows(self):
