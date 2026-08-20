@@ -13,21 +13,43 @@
 
 ---
 
-## 📌 Core Architecture
+## 📌 Overall Architectures
 
 <p align="center">
-  <img src="assets/architecture.svg" alt="Transportation Digital Twin Architecture" width="850"/>
+  <img src="assets/paradigm-shift.jpeg" alt="Multimodal Large Language Model Prediction" width="850"/>
   <br>
-  <em><b>Figure 1:</b> Layered execution pipeline of the Transportation Digital Twin project.</em>
+  <em><b>Figure 1:</b> Paradigm Shift from Traditional Handcrafted Fusion to MLLM-based Unified Prediction.</em>
 </p>
+
+---
+
+### 🌐 Macro-Level Traffic Demand Prediction
+<p align="center">
+  <img src="assets/macro_demand.jpeg" alt="City-wide Origin-Destination Matrices Diagram" width="850"/>
+  <br>
+  <em><b>Figure 1:</b> City-wide Origin-Destination (OD) matrix prediction, aggregating passenger volume and socio-economic shifts for urban planning.</em>
+</p>
+
+---
 
 ### 🌐 Meso-Level Traffic Flow & Congestion Prediction
 
 <p align="center">
-  <img src="assets/FlowPrediction.png" alt="Spatiotemporal Flow Prediction Diagram" width="850"/>
+  <img src="assets/meso_flow.jpeg" alt="Spatiotemporal Flow Prediction Diagram" width="850"/>
   <br>
   <em><b>Figure 2:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
 </p>
+
+---
+
+### 🌐 Micro-Level Vehicle Trajectory Prediction
+<p align="center">
+  <img src="assets/micro_pred.jpeg" alt="Multi-Agent Trajectory Prediction Diagram" width="850"/>
+  <br>
+  <em><b>Figure 3:</b> Sub-second multi-agent behavior analysis, computing exact vehicle-to-vehicle interactions and physics-compliant individual path execution.</em>
+</p>
+
+---
 
 ### 🚦 Digital Twin Command Center Dashboard
 
