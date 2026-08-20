@@ -16,9 +16,9 @@
 ## 📌 Core Architecture
 
 <p align="center">
-  <img src="assets/MLLMs.png" alt="MLLM Spatiotemporal Prediction Architecture" width="850"/>
+  <img src="assets/architecture.svg" alt="Transportation Digital Twin Architecture" width="850"/>
   <br>
-  <em><b>Figure 1:</b> Multimodal Large Language Models (MLLMs) paradigm shifting diverse input types into a unified semantic token space.</em>
+  <em><b>Figure 1:</b> Layered execution pipeline of the Transportation Digital Twin project.</em>
 </p>
 
 ### 🌐 Meso-Level Traffic Flow & Congestion Prediction
