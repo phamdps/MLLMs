@@ -13,6 +13,18 @@
 
 ---
 
+## 📚 Multimodal Architecture
+
+<p align="center">
+  <img src="assets/mllms.gif" alt="Multimodal Large Language Model Architecture" width="850"/>
+  <br>
+  <em><b>Figure 1:</b> The visualization illustrates the complete architecture of the Extended Multimodal LLM, detailing the flow from heterogeneous inputs to the final natural language output.</em>
+</p>
+
+
+---
+
+
 ## 📌 Overall Architectures
 
 <p align="center">
