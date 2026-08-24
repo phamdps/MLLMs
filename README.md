@@ -30,7 +30,7 @@
 <p align="center">
   <img src="assets/paradigm-shift.jpeg" alt="Multimodal Large Language Model Prediction" width="850"/>
   <br>
-  <em><b>Figure 1:</b> Paradigm Shift from Traditional Handcrafted Fusion to MLLM-based Unified Prediction.</em>
+  <em><b>Figure 2:</b> Paradigm Shift from Traditional Handcrafted Fusion to MLLM-based Unified Prediction.</em>
 </p>
 
 ---
@@ -39,7 +39,7 @@
 <p align="center">
   <img src="assets/macro_demand.jpeg" alt="City-wide Origin-Destination Matrices Diagram" width="850"/>
   <br>
-  <em><b>Figure 1:</b> City-wide Origin-Destination (OD) matrix prediction, aggregating passenger volume and socio-economic shifts for urban planning.</em>
+  <em><b>Figure 3:</b> City-wide Origin-Destination (OD) matrix prediction, aggregating passenger volume and socio-economic shifts for urban planning.</em>
 </p>
 
 ---
@@ -49,7 +49,7 @@
 <p align="center">
   <img src="assets/meso_flow.jpeg" alt="Spatiotemporal Flow Prediction Diagram" width="850"/>
   <br>
-  <em><b>Figure 2:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
+  <em><b>Figure 4:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
 </p>
 
 ---
@@ -58,7 +58,7 @@
 <p align="center">
   <img src="assets/micro_pred.jpeg" alt="Multi-Agent Trajectory Prediction Diagram" width="850"/>
   <br>
-  <em><b>Figure 3:</b> Sub-second multi-agent behavior analysis, computing exact vehicle-to-vehicle interactions and physics-compliant individual path execution.</em>
+  <em><b>Figure 5:</b> Sub-second multi-agent behavior analysis, computing exact vehicle-to-vehicle interactions and physics-compliant individual path execution.</em>
 </p>
 
 ---
@@ -68,7 +68,7 @@
 <p align="center">
   <img src="assets/CommandCenter.png" alt="Urban Mobility Digital Twin Command Center" width="850"/>
   <br>
-  <em><b>Figure 3:</b> Interactive command center integrating multimodal forecasting, spatial bottleneck mapping, and AI prescriptive control.</em>
+  <em><b>Figure 6:</b> Interactive command center integrating multimodal forecasting, spatial bottleneck mapping, and AI prescriptive control.</em>
 </p>
 
 
