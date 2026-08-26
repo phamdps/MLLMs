@@ -24,13 +24,45 @@
 
 ---
 
+### How Quantization and Distillation Complement Each Other
+
+They target two completely different bottlenecks in an MLLM architecture:
+
+1. **Knowledge Distillation (KD) reduces architectural size:**
+* *What it does:* A large "teacher" MLLM trains a smaller "student" MLLM (e.g., distilling a massive 34B vision-language model down to a nimble 3B or 7B model) by mimicking its output token distributions and hidden representations.
+* *The benefit:* Cuts down the actual parameter count ($N$), reducing layers and hidden dimensions. In MLLMs, distillation is also frequently used for **vision token compression** (learning how to pass fewer visual features from the vision encoder to the LLM backbone without losing semantic traffic details).
+
+
+2. **Quantization reduces numerical precision:**
+* *What it does:* Compresses the weight representations from high precision (FP16/BF16) down to lower bits (INT8, INT4, or even NF4).
+* *The benefit:* Lowers memory bandwidth requirements. Since LLM and MLLM inference is heavily memory-bandwidth-bound during text generation, quantization drastically speeds up token generation per second.
+
+When applied together, their savings **compound multiplicatively**. For instance, distilling a model to a tenth of its size and then applying INT4 quantization can reduce the final model memory footprint by up to 40×.
+
+---
+
+### Typical Pipeline for MLLMs
+
+<p align="center">
+  <img src="assets/Quantization_vs_Distillation.png" alt="Structural vs. Numerical Compression: Quantization and Distillation" width="850"/>
+  <br>
+  <em><b>Figure 2:</b> This diagram contrasts Knowledge Distillation (transferring knowledge from a large teacher MLLM to a compact student architecture) with Post-Training Quantization (reducing bit-width representation). Together, they enable sustainable, low-latency multimodal reasoning for real-time vehicular and traffic digital twin applications.</em>
+</p>
+
+Building an optimized pipeline for a transportation digital twin, the standard workflow looks like this:
+
+* **Step 1: Multimodal Distillation.** Train a compact student MLLM using the outputs/logits and internal feature maps of a high-end teacher MLLM. Ensure the student retains spatial-temporal awareness (crucial for tracking vehicles, predicting traffic flows, or interpreting dashcam/infrastructure camera feeds).
+* **Step 2: Post-Training Quantization (PTQ) or Quantization-Aware Training (QAT).** Once you have your compact student model, apply quantization methods like GPTQ, AWQ, or bitsandbytes to compress the weights down to INT4 or INT8.
+* **Alternative (Quantization-Aware Distillation):** You can also quantize the teacher or train the student using quantization constraints directly to minimize accuracy drop.
+
+---
 
 ## 📌 Overall Architectures
 
 <p align="center">
   <img src="assets/paradigm-shift.jpeg" alt="Multimodal Large Language Model Prediction" width="850"/>
   <br>
-  <em><b>Figure 2:</b> Paradigm Shift from Traditional Handcrafted Fusion to MLLM-based Unified Prediction.</em>
+  <em><b>Figure 3:</b> Paradigm Shift from Traditional Handcrafted Fusion to MLLM-based Unified Prediction.</em>
 </p>
 
 ---
@@ -39,7 +71,7 @@
 <p align="center">
   <img src="assets/macro_demand.jpeg" alt="City-wide Origin-Destination Matrices Diagram" width="850"/>
   <br>
-  <em><b>Figure 3:</b> City-wide Origin-Destination (OD) matrix prediction, aggregating passenger volume and socio-economic shifts for urban planning.</em>
+  <em><b>Figure 4:</b> City-wide Origin-Destination (OD) matrix prediction, aggregating passenger volume and socio-economic shifts for urban planning.</em>
 </p>
 
 ---
@@ -49,7 +81,7 @@
 <p align="center">
   <img src="assets/meso_flow.jpeg" alt="Spatiotemporal Flow Prediction Diagram" width="850"/>
   <br>
-  <em><b>Figure 4:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
+  <em><b>Figure 5:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
 </p>
 
 ---
@@ -58,7 +90,7 @@
 <p align="center">
   <img src="assets/micro_pred.jpeg" alt="Multi-Agent Trajectory Prediction Diagram" width="850"/>
   <br>
-  <em><b>Figure 5:</b> Sub-second multi-agent behavior analysis, computing exact vehicle-to-vehicle interactions and physics-compliant individual path execution.</em>
+  <em><b>Figure 6:</b> Sub-second multi-agent behavior analysis, computing exact vehicle-to-vehicle interactions and physics-compliant individual path execution.</em>
 </p>
 
 ---
@@ -68,7 +100,7 @@
 <p align="center">
   <img src="assets/CommandCenter.png" alt="Urban Mobility Digital Twin Command Center" width="850"/>
   <br>
-  <em><b>Figure 6:</b> Interactive command center integrating multimodal forecasting, spatial bottleneck mapping, and AI prescriptive control.</em>
+  <em><b>Figure 7:</b> Interactive command center integrating multimodal forecasting, spatial bottleneck mapping, and AI prescriptive control.</em>
 </p>
 
 
