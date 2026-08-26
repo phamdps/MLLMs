@@ -21,10 +21,9 @@
   <em><b>Figure 1:</b> The visualization illustrates the complete architecture of the Extended Multimodal LLM, detailing the flow from heterogeneous inputs to the final natural language output.</em>
 </p>
 
-
 ---
 
-### How Quantization and Distillation Complement Each Other
+### 🌱 How Quantization and Distillation Complement Each Other
 
 They target two completely different bottlenecks in an MLLM architecture:
 
@@ -41,7 +40,7 @@ When applied together, their savings **compound multiplicatively**. For instance
 
 ---
 
-### Typical Pipeline for MLLMs
+### 🌱 Typical Pipeline for MLLMs
 
 <p align="center">
   <img src="assets/Quantization_vs_Distillation.png" alt="Structural vs. Numerical Compression: Quantization and Distillation" width="850"/>
