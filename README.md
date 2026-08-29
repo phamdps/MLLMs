@@ -56,12 +56,40 @@ Building an optimized pipeline for a transportation digital twin, the standard w
 
 ---
 
+## 🧠 Architecture Selection
+
+Quantization and distillation are distinct from Neural Architecture Search (NAS) and network expansion techniques. While architectural methods dynamically alter or grow network layouts to improve performance, quantization and distillation work with fixed, pre-existing structures. Specifically, distillation trains a predetermined smaller student model using knowledge transfer, and quantization simply reduces the numerical precision of existing weights without changing the underlying architecture.
+
+There is no universal model that handles text, time series, images, and graph topologies with equal native efficiency. Because each modality requires distinct mathematical structures and inductive biases—such as sequential semantics for text, temporal dynamics for time series, spatial grids for images, and relational structures for graphs—a one-size-fits-all architecture rarely delivers optimal performance.
+
+<p align="center">
+  <img src="assets/Multimodal_For_Modalities.png" alt="An Initial Evaluation of Multimodal Large Language Models for Modalities Prediction" width="850"/>
+  <br>
+  <em><b>Figure 3:</b> An Exploration of Multimodal Large Language Models for Modalities Prediction.</em>
+</p>
+
+Based on an exploration of modality prediction frameworks outlined in Figure 3, architecture selection usually be tailored to the target use case. If standard designs are insufficient, a custom model should be built from scratch using neural architecture search or network growth methodologies(for more details, visit the [greenmoo GitHub repository](https://github.com/phamdps/greenmoo)).
+
+---
+
+### Strategy Selection Based on Your Use Case
+
+When designing or choosing a pipeline for your specific application, consider the following strategic directions:
+
+* **The MLLM + Visual Rendering Approach:** For rapid prototyping or generalized reasoning, modern Multimodal Large Language Models (MLLMs) paired with visual encoding (such as rendering time series or graph topologies into visual plots) often provide the fastest path to implementation.
+* **Modular Encoder-Decoder Architectures:** For heavy enterprise, financial, or scientific workloads (e.g., drug discovery or IoT telemetry), combining domain-specific front-ends—such as **Graph Neural Networks (GNNs)** for topology and **Vision Transformers (ViTs)** for images—fed into a shared embedding space yields superior domain-specific accuracy.
+* **Custom Model Development:** If your use case requires high-precision joint reasoning across all four modalities simultaneously without losing structural nuance, you may need to **develop a novel custom multimodal architecture** tailored specifically to your data distribution.
+
+
+
+---
+
 ## 📌 Overall Architectures
 
 <p align="center">
   <img src="assets/paradigm-shift.jpeg" alt="Multimodal Large Language Model Prediction" width="850"/>
   <br>
-  <em><b>Figure 3:</b> Paradigm Shift from Traditional Handcrafted Fusion to MLLM-based Unified Prediction.</em>
+  <em><b>Figure 4:</b> Paradigm Shift from Traditional Handcrafted Fusion to MLLM-based Unified Prediction.</em>
 </p>
 
 ---
@@ -70,7 +98,7 @@ Building an optimized pipeline for a transportation digital twin, the standard w
 <p align="center">
   <img src="assets/macro_demand.jpeg" alt="City-wide Origin-Destination Matrices Diagram" width="850"/>
   <br>
-  <em><b>Figure 4:</b> City-wide Origin-Destination (OD) matrix prediction, aggregating passenger volume and socio-economic shifts for urban planning.</em>
+  <em><b>Figure 5:</b> City-wide Origin-Destination (OD) matrix prediction, aggregating passenger volume and socio-economic shifts for urban planning.</em>
 </p>
 
 ---
@@ -80,7 +108,7 @@ Building an optimized pipeline for a transportation digital twin, the standard w
 <p align="center">
   <img src="assets/meso_flow.jpeg" alt="Spatiotemporal Flow Prediction Diagram" width="850"/>
   <br>
-  <em><b>Figure 5:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
+  <em><b>Figure 6:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
 </p>
 
 ---
@@ -89,7 +117,7 @@ Building an optimized pipeline for a transportation digital twin, the standard w
 <p align="center">
   <img src="assets/micro_pred.jpeg" alt="Multi-Agent Trajectory Prediction Diagram" width="850"/>
   <br>
-  <em><b>Figure 6:</b> Sub-second multi-agent behavior analysis, computing exact vehicle-to-vehicle interactions and physics-compliant individual path execution.</em>
+  <em><b>Figure 7:</b> Sub-second multi-agent behavior analysis, computing exact vehicle-to-vehicle interactions and physics-compliant individual path execution.</em>
 </p>
 
 ---
@@ -99,7 +127,7 @@ Building an optimized pipeline for a transportation digital twin, the standard w
 <p align="center">
   <img src="assets/CommandCenter.png" alt="Urban Mobility Digital Twin Command Center" width="850"/>
   <br>
-  <em><b>Figure 7:</b> Interactive command center integrating multimodal forecasting, spatial bottleneck mapping, and AI prescriptive control.</em>
+  <em><b>Figure 8:</b> Interactive command center integrating multimodal forecasting, spatial bottleneck mapping, and AI prescriptive control.</em>
 </p>
 
 
@@ -274,8 +302,6 @@ python scripts/train.py --config config/config.yaml
 
 # 📚 Reference & Reading List
 
----
-
 #### 🌐 Open & Frontier Multimodal Foundation Models (Latest Flagship Releases)
 
 * **Gemini 3.6 Flash & Gemini Omni (Google):** Google (2026), *[Introducing Gemini 3.6 Flash, 3.5 Flash-Lite, and 3.5 Flash Cyber](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-6-flash-3-5-flash-lite-3-5-flash-cyber/)* — Google's latest multimodal ecosystem featuring **Gemini Omni** (built for cross-modal video generation and conversational video editing) and **Gemini 3.6 Flash** (the flagship workhorse optimizing high-speed agentic execution, token efficiency, and advanced code reasoning).
@@ -301,6 +327,7 @@ python scripts/train.py --config config/config.yaml
 
 #### 📈 Time-Series, Geospatial, & Weather Foundation Models
 
+* **Multimodal Information Fusion for Chart Understanding:** Yi et al. (2026), *[Multimodal Information Fusion for Chart Understanding: A Survey of MLLMs—Evolution, Limitations, and Cognitive Enhancement](https://arxiv.org/abs/2602.10138)* — Comprehensive 2026 taxonomy reviewing how MLLMs structurally fuse graphic data (like time series plots and topologies) with natural language.
 * **Aurora (Multimodal TSFM):** Wu et al. (2025/2026), *[Aurora: Towards Universal Generative Multimodal Time Series Forecasting](https://arxiv.org/abs/2509.22295)* — Introduces modality-guided multi-head attention and prototype-guided flow matching for zero-shot time series synthesis.
 * **HORAI (Frequency-Enhanced MFM):** Chen et al. (2026), *[Empowering Time Series Analysis with Large-Scale Multimodal Pretraining](https://arxiv.org/abs/2602.05646)* — Proposes a billion-scale multimodal time series corpus (MM-TS) leveraging endogenous images/text and exogenous news.
 * **Earth Science Survey:** Zhao et al. (2026), *[Earth Science Foundation Models: From Perception to Reasoning and Discovery](https://arxiv.org/html/2605.12542v1)* — Comprehensive survey evaluating geospatial foundation models spanning perception, text reasoning, and agentic workflows.
