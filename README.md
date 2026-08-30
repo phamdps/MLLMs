@@ -66,7 +66,7 @@ There is no universal model that handles text, time series, images, and graph to
   <em><b>Figure 3:</b> An Exploration of Multimodal Large Language Models for Modalities Prediction.</em>
 </p>
 
-Based on an exploration of modality prediction frameworks outlined in Figure 3, architecture selection usually be tailored to the target use case. If standard designs are insufficient, a custom model should be built from scratch using neural architecture search or network growth methodologies (for more details, visit the [greenmoo GitHub repository](https://github.com/phamdps/greenmoo)).
+Based on an exploration of modality prediction frameworks outlined in Figure 3, architecture selection usually be tailored to the target use case. If standard designs are insufficient, a custom model should be built from scratch using neural architecture search or network growth methodologies (for more details, visit the [greenmoo](https://github.com/phamdps/greenmoo)).
 
 ### Strategy Recommendation Based on Some Use Cases
 
