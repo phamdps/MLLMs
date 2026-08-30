@@ -98,13 +98,13 @@ A successful transportation digital twin relies heavily on choosing and configur
 
 In this section, we will explore a typical multimodal architecture such as Qwen2-VL. To understand its internal design, we can trace its pipeline across six structured phases, moving from raw input processing to final text generation.
 
+In the initial input stage (Part A), raw images and videos are broken down into localized patches rather than being forced into rigid, uniform squares. These patches are converted into patch embeddings and tokenized using a naive dynamic resolution strategy, which allows the model to process arbitrary resolutions and variable token lengths while capturing fundamental spatial and temporal dimensions. Following this, the data enters the vision tower (Part B), where a robust Vision Transformer (ViT) architecture processes the features through specialized vision attention, MLPs, and vision positional encodings.
+
 <p align="center">
   <img src="assets/Architecture-of-Qwen2-VL.png" alt="Multimodal Large Language Model Architecture From Inside Perspective" width="850"/>
   <br>
   <em><b>Figure 5:</b> Qwen2-VL Architecture.</em>
 </p>
-
-In the initial input stage (Part A), raw images and videos are broken down into localized patches rather than being forced into rigid, uniform squares. These patches are converted into patch embeddings and tokenized using a naive dynamic resolution strategy, which allows the model to process arbitrary resolutions and variable token lengths while capturing fundamental spatial and temporal dimensions. Following this, the data enters the vision tower (Part B), where a robust Vision Transformer (ViT) architecture processes the features through specialized vision attention, MLPs, and vision positional encodings.
 
 To bridge the gap between visual and text modalities (Part C), a patch merger compresses the visual tokens locally to reduce sequence length overhead. Linear projection layers then map these compressed features directly into the representation space of the language model. Once inside the language model backbone (Part D), text is handled through Qwen2 embeddings and processed by stacked Transformer blocks. These blocks feature Grouped-Query Attention (GQA), Rotary Position Embedding (RoPE), SwiGLU-based MLPs, and RMSNorm with residual connections to ensure stable, high-speed processing.
 
