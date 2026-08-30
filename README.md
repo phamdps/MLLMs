@@ -112,12 +112,34 @@ The model achieves true multimodality (Part E) by seamlessly interleaving image 
 
 ---
 
+## 🚦 A Use Case: Multimodal Large Language Models in Transportation Digital Twins
+
+
+**Figure 6** illustrates the integration and architectural role of Multimodal Large Language Models (MLLMs) within a transportation digital twin framework.
+
+To achieve comprehensive network visibility and intelligent control, the MLLM synthesizes heterogeneous input modalities across three spatial-temporal resolutions:
+
+* **Macro Level (Travel Demand):** Processes system-wide demographic shifts, long-term origin-destination matrices, and regional mobility patterns.
+* **Meso Level (Traffic Flow and Congestion):** Evaluates aggregated corridor metrics, bottleneck formations, and arterial network performance.
+* **Micro Level (Vehicle Trajectory):** Analyzes high-frequency kinematic data, individual driving behaviors, and localized vehicular interactions.
+
+By fusing these multi-level inputs, the model generates real-time predictive insights and adaptive guidance strategies to optimize transportation network performance, safety, and operational efficiency.
+
+<p align="center">
+  <img src="assets/transportation_digital_twins.png" alt="Multimodal Large Language Model in Transportation Digital Twin" width="850"/>
+  <br>
+  <em><b>Figure 6:</b> A Multimodal Large Language Model in Transportation Digital Twin.</em>
+</p>
+
+
+---
+
 ## 📌 Overall Architectures
 
 <p align="center">
   <img src="assets/paradigm-shift.jpeg" alt="Multimodal Large Language Model Prediction" width="850"/>
   <br>
-  <em><b>Figure 6:</b> Paradigm Shift from Traditional Handcrafted Fusion to MLLM-based Unified Prediction.</em>
+  <em><b>Figure 7:</b> Paradigm Shift from Traditional Handcrafted Fusion to MLLM-based Unified Prediction.</em>
 </p>
 
 ---
@@ -126,7 +148,7 @@ The model achieves true multimodality (Part E) by seamlessly interleaving image 
 <p align="center">
   <img src="assets/macro_demand.jpeg" alt="City-wide Origin-Destination Matrices Diagram" width="850"/>
   <br>
-  <em><b>Figure 7:</b> City-wide Origin-Destination (OD) matrix prediction, aggregating passenger volume and socio-economic shifts for urban planning.</em>
+  <em><b>Figure 8:</b> City-wide Origin-Destination (OD) matrix prediction, aggregating passenger volume and socio-economic shifts for urban planning.</em>
 </p>
 
 ---
@@ -136,7 +158,7 @@ The model achieves true multimodality (Part E) by seamlessly interleaving image 
 <p align="center">
   <img src="assets/meso_flow.jpeg" alt="Spatiotemporal Flow Prediction Diagram" width="850"/>
   <br>
-  <em><b>Figure 8:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
+  <em><b>Figure 9:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
 </p>
 
 ---
@@ -145,7 +167,7 @@ The model achieves true multimodality (Part E) by seamlessly interleaving image 
 <p align="center">
   <img src="assets/micro_pred.jpeg" alt="Multi-Agent Trajectory Prediction Diagram" width="850"/>
   <br>
-  <em><b>Figure 9:</b> Sub-second multi-agent behavior analysis, computing exact vehicle-to-vehicle interactions and physics-compliant individual path execution.</em>
+  <em><b>Figure 10:</b> Sub-second multi-agent behavior analysis, computing exact vehicle-to-vehicle interactions and physics-compliant individual path execution.</em>
 </p>
 
 ---
@@ -155,7 +177,7 @@ The model achieves true multimodality (Part E) by seamlessly interleaving image 
 <p align="center">
   <img src="assets/CommandCenter.png" alt="Urban Mobility Digital Twin Command Center" width="850"/>
   <br>
-  <em><b>Figure 10:</b> Interactive command center integrating multimodal forecasting, spatial bottleneck mapping, and AI prescriptive control.</em>
+  <em><b>Figure 11:</b> Interactive command center integrating multimodal forecasting, spatial bottleneck mapping, and AI prescriptive control.</em>
 </p>
 
 
