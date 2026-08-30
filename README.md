@@ -23,7 +23,7 @@
 
 ---
 
-### 🌱 How Quantization and Distillation Complement Each Other
+## 🌱 Quantization and Distillation
 
 They target two completely different bottlenecks in an MLLM architecture:
 
@@ -38,9 +38,7 @@ They target two completely different bottlenecks in an MLLM architecture:
 
 When applied together, their savings **compound multiplicatively**. For instance, distilling a model to a tenth of its size and then applying INT4 quantization can reduce the final model memory footprint by up to 40×.
 
----
-
-### 🌱 Typical Pipeline for MLLMs
+### 🌱 A Typical Pipeline for MLLMs
 
 <p align="center">
   <img src="assets/Quantization_vs_Distillation.png" alt="Structural vs. Numerical Compression: Quantization and Distillation" width="850"/>
@@ -70,9 +68,7 @@ There is no universal model that handles text, time series, images, and graph to
 
 Based on an exploration of modality prediction frameworks outlined in Figure 3, architecture selection usually be tailored to the target use case. If standard designs are insufficient, a custom model should be built from scratch using neural architecture search or network growth methodologies (for more details, visit the [greenmoo GitHub repository](https://github.com/phamdps/greenmoo)).
 
----
-
-### Strategy Selection Based on Your Use Case
+### Strategy Recommendation Based on Some Use Cases
 
 When designing or choosing a pipeline for your specific application, consider the following strategic directions:
 
@@ -80,7 +76,39 @@ When designing or choosing a pipeline for your specific application, consider th
 * **Modular Encoder-Decoder Architectures:** For heavy enterprise, financial, or scientific workloads (e.g., drug discovery or IoT telemetry), combining domain-specific front-ends—such as **Graph Neural Networks (GNNs)** for topology and **Vision Transformers (ViTs)** for images—fed into a shared embedding space yields superior domain-specific accuracy.
 * **Custom Model Development:** If your use case requires high-precision joint reasoning across all four modalities simultaneously without losing structural nuance, you may need to **develop a novel custom multimodal architecture** tailored specifically to your data distribution.
 
+---
 
+## 🏗️ Exploring Multimodal Architecture
+
+A successful transportation digital twin relies heavily on choosing and configuring the right architecture for the job. This section explores the architectural challenges of combining diverse data types and outlines pathways for building tailored, high-performance models when standard designs fall short.
+
+<p align="center">
+  <img src="assets/architecture_of_multimodal.png" alt="Multimodal Large Language Model Architecture From Inside Perspective" width="850"/>
+  <br>
+  <em><b>Figure 4:</b> An inside perspective of multimodal architecture.</em>
+</p>
+
+* **Modality-Specific Encoders:** Independent encoder networks process each distinct data stream—using recurrent or transformer layers for text sequential semantics, temporal models for time-series sensor logs, convolutional networks for spatial imagery, and graph neural networks (GNNs) for topological road networks.
+* **Projection & Alignment Layers:** Linear projection layers or cross-modal adapters map the heterogeneous feature outputs from each encoder into a shared, unified embedding space.
+* **Cross-Modal Fusion Mechanism:** A central fusion module (employing either early, late, or attention-based cross-attention mechanisms) integrates the aligned representations to model complex interactions between spatial, temporal, and textual data.
+* **Task-Specific Decoders:** The combined multimodal representations are fed into downstream task decoders, translating the unified features into traffic predictions, simulation controls, or natural language responses.
+
+
+## 🚀 Qwen2-VL Architecture
+
+To understand the architecture of Qwen2-VL, we can trace its pipeline across six structured phases, moving from raw input processing to final text generation.
+
+In the initial input stage (Part A), raw images and videos are broken down into localized patches rather than being forced into rigid, uniform squares. These patches are converted into patch embeddings and tokenized using a naive dynamic resolution strategy, which allows the model to process arbitrary resolutions and variable token lengths while capturing fundamental spatial and temporal dimensions. Following this, the data enters the vision tower (Part B), where a robust Vision Transformer (ViT) architecture processes the features through specialized vision attention, MLPs, and vision positional encodings.
+
+To bridge the gap between visual and text modalities (Part C), a patch merger compresses the visual tokens locally to reduce sequence length overhead. Linear projection layers then map these compressed features directly into the representation space of the language model. Once inside the language model backbone (Part D), text is handled through Qwen2 embeddings and processed by stacked Transformer blocks. These blocks feature Grouped-Query Attention (GQA), Rotary Position Embedding (RoPE), SwiGLU-based MLPs, and RMSNorm with residual connections to ensure stable, high-speed processing.
+
+<p align="center">
+  <img src="assets/Architecture-of-Qwen2-VL.png" alt="Multimodal Large Language Model Architecture From Inside Perspective" width="850"/>
+  <br>
+  <em><b>Figure 5:</b> Qwen2-VL Architecture.</em>
+</p>
+
+The model achieves true multimodality (Part E) by seamlessly interleaving image or video tokens with text sequences. This is powered by Multimodal Rotary Position Embedding (M-RoPE), a distinctive mechanism that splits positional indices to handle 1D text, 2D image spatial coordinates, and 3D video temporal-spatial dynamics all at once, allowing unified self-attention over the entire mixed sequence. Finally, during inference (Part F), the model processes the combined input sequence during the prefill phase, performs autoregressive generation using a KV cache for speed, and maps the final hidden states through the LM head to output coherent responses.
 
 ---
 
@@ -89,7 +117,7 @@ When designing or choosing a pipeline for your specific application, consider th
 <p align="center">
   <img src="assets/paradigm-shift.jpeg" alt="Multimodal Large Language Model Prediction" width="850"/>
   <br>
-  <em><b>Figure 4:</b> Paradigm Shift from Traditional Handcrafted Fusion to MLLM-based Unified Prediction.</em>
+  <em><b>Figure 6:</b> Paradigm Shift from Traditional Handcrafted Fusion to MLLM-based Unified Prediction.</em>
 </p>
 
 ---
@@ -98,7 +126,7 @@ When designing or choosing a pipeline for your specific application, consider th
 <p align="center">
   <img src="assets/macro_demand.jpeg" alt="City-wide Origin-Destination Matrices Diagram" width="850"/>
   <br>
-  <em><b>Figure 5:</b> City-wide Origin-Destination (OD) matrix prediction, aggregating passenger volume and socio-economic shifts for urban planning.</em>
+  <em><b>Figure 7:</b> City-wide Origin-Destination (OD) matrix prediction, aggregating passenger volume and socio-economic shifts for urban planning.</em>
 </p>
 
 ---
@@ -108,7 +136,7 @@ When designing or choosing a pipeline for your specific application, consider th
 <p align="center">
   <img src="assets/meso_flow.jpeg" alt="Spatiotemporal Flow Prediction Diagram" width="850"/>
   <br>
-  <em><b>Figure 6:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
+  <em><b>Figure 8:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
 </p>
 
 ---
@@ -117,7 +145,7 @@ When designing or choosing a pipeline for your specific application, consider th
 <p align="center">
   <img src="assets/micro_pred.jpeg" alt="Multi-Agent Trajectory Prediction Diagram" width="850"/>
   <br>
-  <em><b>Figure 7:</b> Sub-second multi-agent behavior analysis, computing exact vehicle-to-vehicle interactions and physics-compliant individual path execution.</em>
+  <em><b>Figure 9:</b> Sub-second multi-agent behavior analysis, computing exact vehicle-to-vehicle interactions and physics-compliant individual path execution.</em>
 </p>
 
 ---
@@ -127,7 +155,7 @@ When designing or choosing a pipeline for your specific application, consider th
 <p align="center">
   <img src="assets/CommandCenter.png" alt="Urban Mobility Digital Twin Command Center" width="850"/>
   <br>
-  <em><b>Figure 8:</b> Interactive command center integrating multimodal forecasting, spatial bottleneck mapping, and AI prescriptive control.</em>
+  <em><b>Figure 10:</b> Interactive command center integrating multimodal forecasting, spatial bottleneck mapping, and AI prescriptive control.</em>
 </p>
 
 
