@@ -66,7 +66,7 @@ While distinct modalities—such as sequential text, temporal time series, spati
   <em><b>Figure 3:</b> An Exploration of Multimodal Large Language Models for Modalities Prediction.</em>
 </p>
 
-As illustrated in Figure 3, architecture selection has traditionally relied heavily on human expertise to tailor models to specific use cases. Because manually chosen architectures frequently result in a poor fit for complex or heterogeneous data, there is a critical necessity to continuously improve, adapt, and refine these models rather than relying on rigid, one-off selections. If the availalbe designs are insufficient, a custom architecture could be explored from neural architecture search or network growth methodologies (for more details, visit the [greenmoo](https://github.com/phamdps/greenmoo)).
+As illustrated by Figure 3—which serves as a representative example rather than an exhaustive design space, architecture selection has traditionally relied heavily on human expertise to tailor models to specific use cases. Because manually chosen architectures frequently result in a poor fit for complex or heterogeneous data, there is a critical necessity to continuously improve, adapt, and refine these models rather than relying on rigid, one-off selections. If the availalbe designs are insufficient, a custom architecture could be explored from neural architecture search or network growth methodologies (for more details, visit the [greenmoo](https://github.com/phamdps/greenmoo)).
 
 ### Strategy Recommendation Based on Some Use Cases
 
