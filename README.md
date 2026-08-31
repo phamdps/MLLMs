@@ -58,15 +58,15 @@ Building an optimized pipeline for a transportation digital twin, the standard w
 
 Quantization and distillation are distinct from Neural Architecture Search (NAS) and network expansion techniques. While architectural methods dynamically alter or grow network layouts to improve performance, quantization and distillation work with fixed, pre-existing structures. Specifically, distillation trains a predetermined smaller student model using knowledge transfer, and quantization simply reduces the numerical precision of existing weights without changing the underlying architecture.
 
-There is no universal model that handles text, time series, images, and graph topologies with equal native efficiency. Because each modality requires distinct mathematical structures and inductive biases—such as sequential semantics for text, temporal dynamics for time series, spatial grids for images, and relational structures for graphs—a one-size-fits-all architecture rarely delivers optimal performance.
+While distinct modalities—such as sequential text, temporal time series, spatial images, and relational graphs—traditionally demanded specialized architectures, modern foundation models increasingly bridge these gaps. By employing universal tokenization strategies and flexible attention mechanisms, unified architectures can process heterogeneous data types natively, effectively learning modality-specific dynamics and inductive biases at scale.
 
 <p align="center">
-  <img src="assets/Multimodal_For_Modalities.png" alt="An Initial Evaluation of Multimodal Large Language Models for Modalities Prediction" width="850"/>
+  <img src="assets/multimodal_selection.gif" alt="An Initial Evaluation of Multimodal Large Language Models for Modalities Prediction" width="850"/>
   <br>
   <em><b>Figure 3:</b> An Exploration of Multimodal Large Language Models for Modalities Prediction.</em>
 </p>
 
-Based on an exploration of modality prediction frameworks outlined in Figure 3, architecture selection usually be tailored to the target use case. If standard designs are insufficient, a custom model should be built from scratch using neural architecture search or network growth methodologies (for more details, visit the [greenmoo](https://github.com/phamdps/greenmoo)).
+As illustrated in Figure 3, architecture selection has traditionally relied heavily on human expertise to tailor models to specific use cases. Because manually chosen architectures frequently result in a poor fit for complex or heterogeneous data, there is a critical necessity to continuously improve, adapt, and refine these models rather than relying on rigid, one-off selections. If the availalbe designs are insufficient, a custom architecture could be explored from neural architecture search or network growth methodologies (for more details, visit the [greenmoo](https://github.com/phamdps/greenmoo)).
 
 ### Strategy Recommendation Based on Some Use Cases
 
