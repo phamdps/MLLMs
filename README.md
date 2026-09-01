@@ -21,6 +21,8 @@
   <em><b>Figure 1:</b> The visualization illustrates the complete architecture of the Extended Multimodal LLM, detailing the flow from heterogeneous inputs to the final natural language output.</em>
 </p>
 
+Conventional multimodal frameworks predominantly rely on specialized encoders and heuristic-driven fusion strategies, thereby impeding their adaptability and scalability across heterogeneous tasks and deployment scenarios. Conversely, contemporary Multimodal Large Language Models (MLLMs) establish a novel paradigm by projecting disparate multimodal inputs into a unified semantic token space. This architectural shift empowers cross-modal knowledge transfer and facilitates generalized generative reasoning capable of handling diverse tasks within a singular framework.
+
 ---
 
 ## 🌱 Quantization and Distillation
