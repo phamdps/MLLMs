@@ -25,6 +25,84 @@ Conventional multimodal frameworks predominantly rely on specialized encoders an
 
 ---
 
+## 🚦 A Use Case: Multimodal Large Language Models in Transportation Digital Twins
+
+**Figure 2** illustrates the integration and architectural role of Multimodal Large Language Models (MLLMs) within a transportation digital twin framework. To achieve comprehensive network visibility and intelligent control, the MLLM synthesizes heterogeneous input modalities across three spatial-temporal resolutions:
+
+* **Macro Level (Travel Demand):** Processes system-wide demographic shifts, long-term origin-destination matrices, and regional mobility patterns.
+* **Meso Level (Traffic Flow and Congestion):** Evaluates aggregated corridor metrics, bottleneck formations, and arterial network performance.
+* **Micro Level (Vehicle Trajectory):** Analyzes high-frequency kinematic data, individual driving behaviors, and localized vehicular interactions.
+
+By fusing these multi-level inputs, the model generates real-time predictive insights and adaptive guidance strategies to optimize transportation network performance, safety, and operational efficiency.
+
+<p align="center">
+  <img src="assets/transportation_multimodal.png" alt="Multimodal Large Language Model in Transportation Digital Twin" width="850"/>
+  <br>
+  <em><b>Figure 2:</b> A Multimodal Large Language Model in Transportation Digital Twin.</em>
+</p>
+
+Multimodal traffic prediction combines various data sources—such as structured traffic time-series, external factors, road network maps, and optionally knowledge graphs. By integrating spatiotemporal traffic patterns with this contextual data in a single framework, it creates a more comprehensive view of traffic conditions.
+
+Multi-task joint prediction uses a single, unified system to predict several different things at once—like individual paths, traffic volumes, and travel demand—making it easier to handle needs across all levels of transportation management. Leveraging multi-task joint prediction, MLLMs act as the cognitive core of a transportation digital twin. They predict trajectories, traffic flows, and travel demand concurrently within a single framework, delivering a holistic real-time simulation and decision-making tool for smart cities.
+
+---
+
+## 📌 Traditional vs. Contemporary Architectures
+
+<p align="center">
+  <img src="assets/paradigm-shift.jpeg" alt="Multimodal Large Language Model Prediction" width="850"/>
+  <br>
+  <em><b>Figure 3:</b> Paradigm Shift from Traditional Handcrafted Fusion to MLLM-based Unified Prediction.</em>
+</p>
+
+Historically, multimodal techniques have depended upon task-dependent encoders and heuristic fusion strategies, impeding their adaptability and scalability across heterogeneous scenarios. Recently, Multimodal Large Language Models (MLLMs) have established a novel paradigm. By mapping diverse inputs into a unified semantic token space, they facilitate cross-modal reasoning, knowledge transfer, and generalizable modeling within a single framework.
+
+---
+
+### 🌐 Macro-Level Traffic Demand Prediction
+<p align="center">
+  <img src="assets/macro_demand.jpeg" alt="City-wide Origin-Destination Matrices Diagram" width="850"/>
+  <br>
+  <em><b>Figure 4:</b> City-wide Origin-Destination (OD) matrix prediction, aggregating passenger volume and socio-economic shifts for urban planning.</em>
+</p>
+
+Travel demand prediction addresses macroscopic scales, such as regional zones or Origin-Destination (OD) pairs, aiming to forecast passenger mobility and trip request volumes across extended horizons spanning from hours to days.
+
+---
+
+### 🌐 Meso-Level Traffic Flow & Congestion Prediction
+
+<p align="center">
+  <img src="assets/meso_flow.jpeg" alt="Spatiotemporal Flow Prediction Diagram" width="850"/>
+  <br>
+  <em><b>Figure 5:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
+</p>
+
+Traffic state prediction targets the mesoscopic dynamics of road networks, aiming to forecast operational indicators such as traffic speed, flow rate, and density across near-future horizons ranging from minutes to hours.
+
+---
+
+### 🌐 Micro-Level Vehicle Trajectory Prediction
+<p align="center">
+  <img src="assets/micro_pred.jpeg" alt="Multi-Agent Trajectory Prediction Diagram" width="850"/>
+  <br>
+  <em><b>Figure 6:</b> Sub-second multi-agent behavior analysis, computing exact vehicle-to-vehicle interactions and physics-compliant individual path execution.</em>
+</p>
+
+Trajectory prediction addresses the microscopic scale by modeling the short-term behaviors of individual traffic agents, aiming to forecast future spatial coordinates, motion paths, or lane-level intentions across horizons spanning a few seconds.
+
+---
+
+# 📁 Key Considerations
+
+To integrate MLLMs effectively into a transportation digital twin, three core considerations should be addressed:
+
+* **Model Efficiency:** Evaluating trade-offs between quantization and knowledge distillation.
+* **Foundation Selection:** Choosing the optimal base model for spatial-temporal tasks.
+* **Architectural Design:** Exploring typical MLLM paradigms, such as Qwen2-VL, etc.
+
+---
+
 ## 🌱 Quantization and Distillation
 
 They target two completely different bottlenecks in an MLLM architecture:
@@ -45,7 +123,7 @@ When applied together, their savings **compound multiplicatively**. For instance
 <p align="center">
   <img src="assets/Quantization_vs_Distillation.png" alt="Structural vs. Numerical Compression: Quantization and Distillation" width="850"/>
   <br>
-  <em><b>Figure 2:</b> This diagram contrasts Knowledge Distillation (transferring knowledge from a large teacher MLLM to a compact student architecture) with Post-Training Quantization (reducing bit-width representation). Together, they enable sustainable, low-latency multimodal reasoning for real-time vehicular and traffic digital twin applications.</em>
+  <em><b>Figure 7:</b> This diagram contrasts Knowledge Distillation (transferring knowledge from a large teacher MLLM to a compact student architecture) with Post-Training Quantization (reducing bit-width representation). Together, they enable sustainable, low-latency multimodal reasoning for real-time vehicular and traffic digital twin applications.</em>
 </p>
 
 Building an optimized pipeline for a transportation digital twin, the standard workflow looks like this:
@@ -65,10 +143,10 @@ While distinct modalities—such as sequential text, temporal time series, spati
 <p align="center">
   <img src="assets/multimodal_selection.gif" alt="An Initial Evaluation of Multimodal Large Language Models for Modalities Prediction" width="850"/>
   <br>
-  <em><b>Figure 3:</b> An Exploration of Multimodal Large Language Models for Modalities Prediction.</em>
+  <em><b>Figure 8:</b> An Exploration of Multimodal Large Language Models for Modalities Prediction.</em>
 </p>
 
-As illustrated by Figure 3—which serves as a representative example rather than an exhaustive design space, architecture selection has traditionally relied heavily on human expertise to tailor models to specific use cases.  While manual designs provide strong general-purpose baselines, they might be not sufficient when apply to specialized or domain specific modalities. There is a critical necessity to continuously improve, adapt, and refine these models rather than relying on rigid, one-off selections. If the availalbe designs are insufficient, neural architecture search or network growth methodologies can be used to extend or improve the existing solutions (for more details, visit the [greenmoo](https://github.com/phamdps/greenmoo)).
+As illustrated by Figure 8—which serves as a representative example rather than an exhaustive design space, architecture selection has traditionally relied heavily on human expertise to tailor models to specific use cases.  While manual designs provide strong general-purpose baselines, they might be not sufficient when apply to specialized or domain specific modalities. There is a critical necessity to continuously improve, adapt, and refine these models rather than relying on rigid, one-off selections. If the availalbe designs are insufficient, neural architecture search or network growth methodologies can be used to extend or improve the existing solutions (for more details, visit the [greenmoo](https://github.com/phamdps/greenmoo)).
 
 ### Strategy Recommendation Based on Some Use Cases
 
@@ -87,7 +165,7 @@ A successful transportation digital twin relies heavily on choosing and configur
 <p align="center">
   <img src="assets/architecture_of_multimodal.png" alt="Multimodal Large Language Model Architecture From Inside Perspective" width="850"/>
   <br>
-  <em><b>Figure 4:</b> An inside perspective of multimodal architecture.</em>
+  <em><b>Figure 9:</b> An inside perspective of multimodal architecture.</em>
 </p>
 
 * **Modality-Specific Encoders:** Independent encoder networks process each distinct data stream—using recurrent or transformer layers for text sequential semantics, temporal models for time-series sensor logs, convolutional networks for spatial imagery, and graph neural networks (GNNs) for topological road networks.
@@ -105,72 +183,12 @@ In the initial input stage (Part A), raw images and videos are broken down into 
 <p align="center">
   <img src="assets/Architecture-of-Qwen2-VL.png" alt="Multimodal Large Language Model Architecture From Inside Perspective" width="850"/>
   <br>
-  <em><b>Figure 5:</b> Qwen2-VL Architecture.</em>
+  <em><b>Figure 10:</b> Qwen2-VL Architecture.</em>
 </p>
 
 To bridge the gap between visual and text modalities (Part C), a patch merger compresses the visual tokens locally to reduce sequence length overhead. Linear projection layers then map these compressed features directly into the representation space of the language model. Once inside the language model backbone (Part D), text is handled through Qwen2 embeddings and processed by stacked Transformer blocks. These blocks feature Grouped-Query Attention (GQA), Rotary Position Embedding (RoPE), SwiGLU-based MLPs, and RMSNorm with residual connections to ensure stable, high-speed processing.
 
 The model achieves true multimodality (Part E) by seamlessly interleaving image or video tokens with text sequences. This is powered by Multimodal Rotary Position Embedding (M-RoPE), a distinctive mechanism that splits positional indices to handle 1D text, 2D image spatial coordinates, and 3D video temporal-spatial dynamics all at once, allowing unified self-attention over the entire mixed sequence. Finally, during inference (Part F), the model processes the combined input sequence during the prefill phase, performs autoregressive generation using a KV cache for speed, and maps the final hidden states through the LM head to output coherent responses.
-
----
-
-## 🚦 A Use Case: Multimodal Large Language Models in Transportation Digital Twins
-
-
-**Figure 6** illustrates the integration and architectural role of Multimodal Large Language Models (MLLMs) within a transportation digital twin framework.
-
-To achieve comprehensive network visibility and intelligent control, the MLLM synthesizes heterogeneous input modalities across three spatial-temporal resolutions:
-
-* **Macro Level (Travel Demand):** Processes system-wide demographic shifts, long-term origin-destination matrices, and regional mobility patterns.
-* **Meso Level (Traffic Flow and Congestion):** Evaluates aggregated corridor metrics, bottleneck formations, and arterial network performance.
-* **Micro Level (Vehicle Trajectory):** Analyzes high-frequency kinematic data, individual driving behaviors, and localized vehicular interactions.
-
-By fusing these multi-level inputs, the model generates real-time predictive insights and adaptive guidance strategies to optimize transportation network performance, safety, and operational efficiency.
-
-<p align="center">
-  <img src="assets/transportation_digital_twins.png" alt="Multimodal Large Language Model in Transportation Digital Twin" width="850"/>
-  <br>
-  <em><b>Figure 6:</b> A Multimodal Large Language Model in Transportation Digital Twin.</em>
-</p>
-
-
----
-
-## 📌 Overall Architectures
-
-<p align="center">
-  <img src="assets/paradigm-shift.jpeg" alt="Multimodal Large Language Model Prediction" width="850"/>
-  <br>
-  <em><b>Figure 7:</b> Paradigm Shift from Traditional Handcrafted Fusion to MLLM-based Unified Prediction.</em>
-</p>
-
----
-
-### 🌐 Macro-Level Traffic Demand Prediction
-<p align="center">
-  <img src="assets/macro_demand.jpeg" alt="City-wide Origin-Destination Matrices Diagram" width="850"/>
-  <br>
-  <em><b>Figure 8:</b> City-wide Origin-Destination (OD) matrix prediction, aggregating passenger volume and socio-economic shifts for urban planning.</em>
-</p>
-
----
-
-### 🌐 Meso-Level Traffic Flow & Congestion Prediction
-
-<p align="center">
-  <img src="assets/meso_flow.jpeg" alt="Spatiotemporal Flow Prediction Diagram" width="850"/>
-  <br>
-  <em><b>Figure 9:</b> Spatiotemporal flow estimation targeting road network operational states (flow, speed, and density).</em>
-</p>
-
----
-
-### 🌐 Micro-Level Vehicle Trajectory Prediction
-<p align="center">
-  <img src="assets/micro_pred.jpeg" alt="Multi-Agent Trajectory Prediction Diagram" width="850"/>
-  <br>
-  <em><b>Figure 10:</b> Sub-second multi-agent behavior analysis, computing exact vehicle-to-vehicle interactions and physics-compliant individual path execution.</em>
-</p>
 
 ---
 
@@ -181,8 +199,6 @@ By fusing these multi-level inputs, the model generates real-time predictive ins
   <br>
   <em><b>Figure 11:</b> Interactive command center integrating multimodal forecasting, spatial bottleneck mapping, and AI prescriptive control.</em>
 </p>
-
-
 
 * **Multi-Scale Spatial Aggregation:** Bridges fine-grained **meso-level traffic flows** (sensor speeds/occupancy) with macro-level **travel demand** (zonal inflows/outflows) using explicit spatial mapping matrices ($A_{\text{meso} \rightarrow \text{macro}}$).
 * **Cross-Modal Fusion:** Combines Spatial Graph Neural Networks (GNNs) with autoregressive Transformer backbones to align physical time-series and network topologies with natural language contexts.
